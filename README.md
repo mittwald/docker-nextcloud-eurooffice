@@ -59,9 +59,6 @@ Der Hook wertet diese Variablen aus (jeweils nur gesetzt, wenn gefüllt):
 
 Config-Keys laut <https://github.com/Euro-Office/eurooffice-nextcloud>.
 
-Zusätzlich: `NEXTCLOUD_BACKGROUND_CRON=true` schaltet die Background-Jobs auf
-`cron`-Modus (`occ background:cron`) – sinnvoll, wenn ein cron-Container läuft.
-
 > Die Euro-Office-App ist erst ab Nextcloud 34 im App Store. Auf 33 toleriert der
 > Hook das fehlende Paket (`|| true`), der Start bricht nicht ab.
 

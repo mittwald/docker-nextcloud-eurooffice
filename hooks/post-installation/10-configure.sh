@@ -5,10 +5,6 @@ occ() { php /var/www/html/occ "$@"; }
 
 occ config:system:set default_phone_region --value="DE"
 
-if [ "${NEXTCLOUD_BACKGROUND_CRON:-}" = "true" ]; then
-	occ background:cron
-fi
-
 occ app:install eurooffice || true
 occ app:enable eurooffice || true
 

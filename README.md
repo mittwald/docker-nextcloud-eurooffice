@@ -27,10 +27,18 @@ migriert, regelmäßig laufen lassen / pullen, damit kein Major übersprungen wi
 
 ## Verwendung
 
+Schnell ausprobieren mit dem mitgelieferten Demo-Stack (`compose.demo.yaml`):
+
+```bash
+docker compose -f compose.demo.yaml up -d   # -> http://localhost:8080
+```
+
+Oder das Image direkt einbinden:
+
 ```yaml
 services:
   app:
-    image: ghcr.io/<owner>/nextcloud-eurooffice-image:stable
+    image: ghcr.io/<owner>/nextcloud-eurooffice:stable
     # ... restliche Nextcloud-Konfiguration
 ```
 

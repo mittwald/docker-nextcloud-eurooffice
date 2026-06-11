@@ -1,12 +1,6 @@
-# Minimaler Demo-Stack zum Ausprobieren des Images.
-#   docker compose up -d   ->   http://localhost:8080
-#
-# NICHT für Produktion: SQLite, schwache Passwörter, kein TLS/Reverse-Proxy.
-# Vollständiges Setup (MariaDB, Redis, Caddy+TLS) siehe Hauptprojekt.
 services:
   app:
     image: ghcr.io/mittwald/nextcloud-eurooffice:stable-apache
-    # build: .            # alternativ lokal bauen statt aus GHCR ziehen
     restart: unless-stopped
     ports:
       - "8080:80"
@@ -14,16 +8,10 @@ services:
       NEXTCLOUD_ADMIN_USER: admin
       NEXTCLOUD_ADMIN_PASSWORD: admin
       NEXTCLOUD_TRUSTED_DOMAINS: localhost
-      # vom eingebackenen Hook ausgewertet -> eurooffice-App wird aktiviert + konf.
       EUROOFFICE_JWT_SECRET: demo-secret-change-me
-      # DocumentServerUrl setzt der Hook aus EUROOFFICE_DOMAIN als https://…
-      # Im TLS-losen Demo daher weglassen und die URL in der Admin-UI eintragen
-      # (http://localhost:8081). In Prod hinter Reverse-Proxy z.B.:
-      #   EUROOFFICE_DOMAIN: office.example.com
     volumes:
       - nextcloud:/var/www/html
 
-  # Euro-Office Document Server (OnlyOffice-Derivat)
   eurooffice:
     image: ghcr.io/euro-office/documentserver:latest
     restart: unless-stopped

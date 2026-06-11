@@ -4,9 +4,11 @@
 # Hook-Mechanismus: https://github.com/nextcloud/docker#auto-configuration-via-hook-folders
 # Default: stable-apache. stable folgt dem jeweils aktuellen stabilen Major –
 # regelmäßig bauen/pullen, damit kein Major übersprungen wird (NC migriert nur
-# major-weise). Über --build-arg überschreibbar.
+# major-weise). Variante (apache/fpm) und Version über --build-arg überschreibbar;
+# die Hooks sind SAPI-unabhängig und funktionieren mit beiden Varianten.
 ARG NEXTCLOUD_VERSION=stable
-FROM nextcloud:${NEXTCLOUD_VERSION}-apache
+ARG NEXTCLOUD_VARIANT=apache
+FROM nextcloud:${NEXTCLOUD_VERSION}-${NEXTCLOUD_VARIANT}
 
 COPY hooks/ /docker-entrypoint-hooks.d/
 RUN find /docker-entrypoint-hooks.d -name '*.sh' -exec chmod +x {} +

@@ -5,7 +5,7 @@
 # Vollständiges Setup (MariaDB, Redis, Caddy+TLS) siehe Hauptprojekt.
 services:
   app:
-    image: ghcr.io/OWNER/nextcloud-eurooffice:stable
+    image: ghcr.io/mittwald/nextcloud-eurooffice:stable-apache
     # build: .            # alternativ lokal bauen statt aus GHCR ziehen
     restart: unless-stopped
     ports:

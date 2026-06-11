@@ -16,21 +16,21 @@ Der Workflow `.github/workflows/build.yml` baut das Image und published es nach
 GHCR:
 
 - **`schedule`** (täglich): zieht per `pull: true` das aktuelle
-  `nextcloud:<major>-apache` und übernimmt so neue Nextcloud-Releases
+  `nextcloud:stable-apache` und übernimmt so neue Nextcloud-Releases
   automatisch.
 - **`push`** auf `main` und **`workflow_dispatch`** (manuell).
 
-Tags: `ghcr.io/<owner>/<repo>:<major>` und `:latest`.
+Tags: `ghcr.io/<owner>/<repo>:stable` und `:latest`.
 
-Für einen **Major-Sprung** (Nextcloud erlaubt keine übersprungenen Majors) die
-Variable `NEXTCLOUD_VERSION` im Workflow erhöhen.
+`stable` folgt dem jeweils aktuellen stabilen Major. Da Nextcloud nur major-weise
+migriert, regelmäßig laufen lassen / pullen, damit kein Major übersprungen wird.
 
 ## Verwendung
 
 ```yaml
 services:
   app:
-    image: ghcr.io/<owner>/nextcloud-eurooffice-image:33
+    image: ghcr.io/<owner>/nextcloud-eurooffice-image:stable
     # ... restliche Nextcloud-Konfiguration
 ```
 
@@ -51,5 +51,7 @@ Config-Keys laut <https://github.com/Euro-Office/eurooffice-nextcloud>.
 ## Lokal bauen
 
 ```bash
+docker build -t nextcloud-eurooffice:stable .
+# oder eine bestimmte Version pinnen:
 docker build --build-arg NEXTCLOUD_VERSION=33 -t nextcloud-eurooffice:33 .
 ```

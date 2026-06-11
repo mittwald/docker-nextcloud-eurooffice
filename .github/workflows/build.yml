@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 
 env:
-  # Nextcloud-Major, dem dieses Image folgt. Für einen Major-Sprung hier erhöhen.
-  NEXTCLOUD_VERSION: "33"
+  # Folgt dem offiziellen nextcloud:stable-apache (jeweils aktueller stabiler Major).
+  NEXTCLOUD_VERSION: "stable"
 
 jobs:
   build:
@@ -37,7 +37,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=${{ env.NEXTCLOUD_VERSION }}
+            type=raw,value=stable
             type=raw,value=latest
 
       - uses: docker/build-push-action@v6

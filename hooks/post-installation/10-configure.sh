@@ -14,3 +14,9 @@ fi
 if [ -n "${EUROOFFICE_JWT_SECRET:-}" ]; then
 	occ config:app:set eurooffice jwt_secret --value="${EUROOFFICE_JWT_SECRET}"
 fi
+if [ -n "${EUROOFFICE_INTERNAL_URL:-}" ]; then
+	occ config:app:set eurooffice DocumentServerInternalUrl --value="${EUROOFFICE_INTERNAL_URL}"
+fi
+if [ -n "${NEXTCLOUD_INTERNAL_URL:-}" ]; then
+	occ config:app:set eurooffice StorageUrl --value="${NEXTCLOUD_INTERNAL_URL}"
+fi

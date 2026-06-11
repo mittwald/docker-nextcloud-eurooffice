@@ -52,8 +52,10 @@ Der Hook wertet diese Variablen aus (jeweils nur gesetzt, wenn gefüllt):
 
 | Variable | Wirkung (`occ config:app:set eurooffice …`) |
 |---|---|
-| `EUROOFFICE_DOMAIN` | `DocumentServerUrl` = `https://$EUROOFFICE_DOMAIN` |
+| `EUROOFFICE_DOMAIN` | `DocumentServerUrl` = `https://$EUROOFFICE_DOMAIN` (Browser → Office) |
 | `EUROOFFICE_JWT_SECRET` | `jwt_secret` |
+| `EUROOFFICE_INTERNAL_URL` | `DocumentServerInternalUrl` (Nextcloud → Office, intern) |
+| `NEXTCLOUD_INTERNAL_URL` | `StorageUrl` (Office → Nextcloud, intern) |
 
 Config-Keys laut <https://github.com/Euro-Office/eurooffice-nextcloud>.
 

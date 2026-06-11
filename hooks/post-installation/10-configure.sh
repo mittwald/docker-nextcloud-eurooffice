@@ -4,7 +4,6 @@ set -eu
 occ() { php /var/www/html/occ "$@"; }
 
 occ config:system:set default_phone_region --value="DE"
-occ config:system:set maintenance_window_start --type=integer --value=1
 
 occ app:install eurooffice || true
 occ app:enable eurooffice || true

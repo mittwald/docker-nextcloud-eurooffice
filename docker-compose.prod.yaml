@@ -68,6 +68,7 @@ services:
       JWT_ENABLED: "true"
       JWT_SECRET: ${EUROOFFICE_JWT_SECRET}
       JWT_HEADER: Authorization
+      EXAMPLE_ENABLED: "false"
 
 volumes:
   nextcloud-app:

@@ -58,6 +58,7 @@ services:
       JWT_ENABLED: "true"
       JWT_SECRET: demo-jwt-secret-change-me-0123456789
       JWT_HEADER: Authorization
+      EXAMPLE_ENABLED: "false"
 
 volumes:
   nextcloud-app:

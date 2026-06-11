@@ -1,72 +1,85 @@
 # docker-nextcloud-eurooffice
 
-Dünner Layer über dem offiziellen [`nextcloud`](https://hub.docker.com/_/nextcloud)
--Image (`*-apache`), der nur die Entrypoint-Hooks einbäckt, damit die
-[Euro-Office](https://github.com/Euro-Office/eurooffice-nextcloud)-Integration
-beim ersten Container-Start automatisch installiert, aktiviert und konfiguriert
-wird.
+Thin layer on top of the official [`nextcloud`](https://hub.docker.com/_/nextcloud)
+image (`*-apache`) that only bakes in the entrypoint hooks, so the
+[Euro-Office](https://github.com/Euro-Office/eurooffice-nextcloud) integration is
+automatically installed, enabled and configured on first container start.
 
-Es wird **nichts am Nextcloud-Image selbst verändert** – nur ein Skript unter
-`/docker-entrypoint-hooks.d/post-installation/` ergänzt
-([Hook-Mechanismus](https://github.com/nextcloud/docker#auto-configuration-via-hook-folders)).
+**Nothing in the Nextcloud image itself is changed** – only a script under
+`/docker-entrypoint-hooks.d/post-installation/` is added
+([hook mechanism](https://github.com/nextcloud/docker#auto-configuration-via-hook-folders)).
 
-## Automatische Builds
+## Automated builds
 
-Der Workflow `.github/workflows/build.yml` baut das Image und published es nach
+The workflow `.github/workflows/build.yml` builds the image and publishes it to
 GHCR:
 
-- **`schedule`** (alle 12 h): prüft via
-  [`lucacome/docker-image-update-checker`](https://github.com/lucacome/docker-image-update-checker),
-  ob sich das Basis-Image hinter `nextcloud:stable-apache` geändert hat, und baut
-  nur dann – so werden neue Nextcloud-Releases automatisch übernommen, ohne
-  unnötige Builds.
-- **`push`** auf `main` und **`workflow_dispatch`** (manuell): bauen immer.
+- **`schedule`** (every 12 h): checks via
+  [`lucacome/docker-image-update-checker`](https://github.com/lucacome/docker-image-update-checker)
+  whether the base image behind `nextcloud:stable-apache` changed, and only
+  builds then – so new Nextcloud releases are picked up automatically without
+  unnecessary builds.
+- **`push`** to `main` and **`workflow_dispatch`** (manual): always build.
 
-Tags: `ghcr.io/mittwald/nextcloud-eurooffice:stable-apache` und `:latest`
-(`latest` = Default-Variante apache). Eine fpm-Variante würde zusätzlich
-`stable-fpm` liefern.
+Tags: `ghcr.io/mittwald/nextcloud-eurooffice:stable-apache`, `:latest` and the
+concrete major (e.g. `:34-apache`) for pinning/rollback.
 
-`stable` folgt dem jeweils aktuellen stabilen Major. Da Nextcloud nur major-weise
-migriert, regelmäßig laufen lassen / pullen, damit kein Major übersprungen wird.
+The built Nextcloud major is pinned via `NEXTCLOUD_VERSION` in the workflow
+(currently `34`). Since Nextcloud only migrates one major at a time, bump it one
+major at a time so none is skipped.
 
-## Verwendung
+## Usage
 
-Schnell ausprobieren mit dem mitgelieferten Demo-Stack (`docker-compose.yaml`):
+Quick try with the bundled demo stack (`docker-compose.yaml`):
 
 ```bash
 docker compose up -d   # -> http://localhost:8080
 ```
 
-Oder das Image direkt einbinden:
+Or use the image directly:
 
 ```yaml
 services:
-  app:
+  nextcloud-app:
     image: ghcr.io/mittwald/nextcloud-eurooffice:stable-apache
-    # ... restliche Nextcloud-Konfiguration
+    # ... rest of the Nextcloud configuration
 ```
 
-### Konfiguration per Env-Variablen
+### Production
 
-Der Hook wertet diese Variablen aus (jeweils nur gesetzt, wenn gefüllt):
-
-| Variable | Wirkung (`occ config:app:set eurooffice …`) |
-|---|---|
-| `EUROOFFICE_DOMAIN` | `DocumentServerUrl` = `https://$EUROOFFICE_DOMAIN` (Browser → Office) |
-| `EUROOFFICE_JWT_SECRET` | `jwt_secret` |
-| `EUROOFFICE_INTERNAL_URL` | `DocumentServerInternalUrl` (Nextcloud → Office, intern) |
-| `NEXTCLOUD_INTERNAL_URL` | `StorageUrl` (Office → Nextcloud, intern) |
-
-Config-Keys laut <https://github.com/Euro-Office/eurooffice-nextcloud>.
-
-> Die Euro-Office-App ist erst ab Nextcloud 34 im App Store. Auf 33 toleriert der
-> Hook das fehlende Paket (`|| true`), der Start bricht nicht ab.
-
-## Lokal bauen
+`docker-compose.prod.yaml` for running behind a TLS-terminating reverse proxy
+(e.g. Mittwald container hosting). Secrets/domains come from a `.env` (see the
+file header):
 
 ```bash
-docker build -t nextcloud-eurooffice:stable-apache .
-# oder Version/Variante pinnen:
-docker build --build-arg NEXTCLOUD_VERSION=33 --build-arg NEXTCLOUD_VARIANT=fpm \
-  -t nextcloud-eurooffice:33-fpm .
+docker compose -f docker-compose.prod.yaml up -d
+```
+
+Since the proxy speaks plain HTTP internally, the prod compose sets
+`OVERWRITEPROTOCOL`, `OVERWRITECLIURL` and `TRUSTED_PROXIES` (otherwise URLs are
+generated as `http://` → mixed content). These are applied directly by the
+`nextcloud` image into `config.php`.
+
+### Environment variables
+
+The hook evaluates these variables (each only applied when set):
+
+| Variable | Effect (`occ config:app:set eurooffice …`) |
+|---|---|
+| `EUROOFFICE_DOMAIN` | `DocumentServerUrl` (browser → Office); `https://` is prepended unless a scheme is already given |
+| `EUROOFFICE_JWT_SECRET` | `jwt_secret` (min. 32 characters) |
+| `EUROOFFICE_INTERNAL_URL` | `DocumentServerInternalUrl` (Nextcloud → Office, internal) |
+| `NEXTCLOUD_INTERNAL_URL` | `StorageUrl` (Office → Nextcloud, internal) |
+
+Config keys per <https://github.com/Euro-Office/eurooffice-nextcloud>.
+
+> The Euro-Office app is only in the app store from Nextcloud 34 on. On 33 the
+> hook tolerates the missing package (`|| true`), so the start does not abort.
+
+## Build locally
+
+```bash
+docker build -t nextcloud-eurooffice:34-apache .
+# or pin another version:
+docker build --build-arg NEXTCLOUD_VERSION=33 -t nextcloud-eurooffice:33 .
 ```

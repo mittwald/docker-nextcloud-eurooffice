@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  NEXTCLOUD_VERSION: "stable"
+  NEXTCLOUD_VERSION: "34"
   VARIANT: "apache"
   IMAGE: ghcr.io/mittwald/nextcloud-eurooffice
 
@@ -46,6 +46,15 @@ jobs:
             echo "build=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - id: ncver
+        if: steps.decide.outputs.build == 'true'
+        run: |
+          major=$(docker run --rm --entrypoint sh \
+            nextcloud:${{ env.NEXTCLOUD_VERSION }}-${{ env.VARIANT }} \
+            -c 'php -r "include \"/usr/src/nextcloud/version.php\"; echo \$OC_VersionString;"' \
+            | cut -d. -f1)
+          echo "major=$major" >> "$GITHUB_OUTPUT"
+
       - id: meta
         if: steps.decide.outputs.build == 'true'
         uses: docker/metadata-action@v6
@@ -53,6 +62,7 @@ jobs:
           images: ${{ env.IMAGE }}
           tags: |
             type=raw,value=stable-${{ env.VARIANT }}
+            type=raw,value=${{ steps.ncver.outputs.major }}-${{ env.VARIANT }}
             type=raw,value=latest
 
       - if: steps.decide.outputs.build == 'true'

@@ -27,10 +27,10 @@ migriert, regelmäßig laufen lassen / pullen, damit kein Major übersprungen wi
 
 ## Verwendung
 
-Schnell ausprobieren mit dem mitgelieferten Demo-Stack (`compose.demo.yaml`):
+Schnell ausprobieren mit dem mitgelieferten Demo-Stack (`docker-compose.yaml`):
 
 ```bash
-docker compose -f compose.demo.yaml up -d   # -> http://localhost:8080
+docker compose up -d   # -> http://localhost:8080
 ```
 
 Oder das Image direkt einbinden:

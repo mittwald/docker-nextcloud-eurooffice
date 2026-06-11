@@ -1,5 +1,5 @@
 # Minimaler Demo-Stack zum Ausprobieren des Images.
-#   docker compose -f compose.demo.yaml up -d   ->   http://localhost:8080
+#   docker compose up -d   ->   http://localhost:8080
 #
 # NICHT für Produktion: SQLite, schwache Passwörter, kein TLS/Reverse-Proxy.
 # Vollständiges Setup (MariaDB, Redis, Caddy+TLS) siehe Hauptprojekt.

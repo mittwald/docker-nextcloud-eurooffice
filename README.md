@@ -24,6 +24,12 @@ GHCR:
 Tags: `ghcr.io/mittwald/nextcloud-eurooffice:stable-apache`, `:latest` and the
 concrete major (e.g. `:34-apache`) for pinning/rollback.
 
+Tags built from this workflow are multi-platform manifests for
+**`linux/amd64`** and **`linux/arm64`**, so the image also runs on Apple Silicon
+and arm64 servers. Tags published before this change stay amd64-only until they
+are rebuilt. Since the Dockerfile only copies files onto the multi-arch base
+image, no emulation is involved in the build.
+
 The built Nextcloud major is pinned via `NEXTCLOUD_VERSION` in the workflow
 (currently `34`). Since Nextcloud only migrates one major at a time, bump it one
 major at a time so none is skipped.
@@ -82,4 +88,11 @@ Config keys per <https://github.com/Euro-Office/eurooffice-nextcloud>.
 docker build -t nextcloud-eurooffice:34-apache .
 # or pin another version:
 docker build --build-arg NEXTCLOUD_VERSION=33 -t nextcloud-eurooffice:33 .
+```
+
+For both platforms at once (result stays in the build cache unless you add
+`--push` or `--load`):
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t nextcloud-eurooffice:34-apache .
 ```

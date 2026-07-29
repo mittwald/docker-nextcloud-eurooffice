@@ -11,6 +11,7 @@ env:
   NEXTCLOUD_VERSION: "34"
   VARIANT: "apache"
   IMAGE: ghcr.io/mittwald/nextcloud-eurooffice
+  PLATFORMS: "linux/amd64,linux/arm64"
 
 jobs:
   build:
@@ -34,7 +35,7 @@ jobs:
         with:
           base-image: nextcloud:${{ env.NEXTCLOUD_VERSION }}-${{ env.VARIANT }}
           image: ${{ env.IMAGE }}:stable-${{ env.VARIANT }}
-          platforms: linux/amd64
+          platforms: ${{ env.PLATFORMS }}
 
       - id: decide
         run: |
@@ -69,6 +70,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          platforms: ${{ env.PLATFORMS }}
           push: true
           pull: true
           build-args: |

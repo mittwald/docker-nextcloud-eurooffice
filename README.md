@@ -16,9 +16,11 @@ GHCR:
 
 - **`schedule`** (every 12 h): checks via
   [`lucacome/docker-image-update-checker`](https://github.com/lucacome/docker-image-update-checker)
-  whether the base image behind `nextcloud:stable-apache` changed, and only
-  builds then – so new Nextcloud releases are picked up automatically without
-  unnecessary builds.
+  whether the base image behind `nextcloud:<NEXTCLOUD_VERSION>-apache` changed,
+  and only builds then – so new Nextcloud patch/minor releases of the pinned
+  major are picked up automatically without unnecessary builds. A `keepalive`
+  job re-enables the workflow on every scheduled run, because GitHub disables
+  scheduled workflows after 60 days without repository activity.
 - **`push`** to `main` and **`workflow_dispatch`** (manual): always build.
 
 Tags: `ghcr.io/mittwald/nextcloud-eurooffice:stable-apache`, `:latest` and the
@@ -30,9 +32,16 @@ and arm64 servers. Tags published before this change stay amd64-only until they
 are rebuilt. Since the Dockerfile only copies files onto the multi-arch base
 image, no emulation is involved in the build.
 
-The built Nextcloud major is pinned via `NEXTCLOUD_VERSION` in the workflow
-(currently `34`). Since Nextcloud only migrates one major at a time, bump it one
+The built Nextcloud major is pinned via `NEXTCLOUD_VERSION` in the workflow and
+the `Dockerfile`. Since Nextcloud only migrates one major at a time, bump it one
 major at a time so none is skipped.
+
+## Dependency updates
+
+[Renovate](https://docs.renovatebot.com/) (`renovate.json`) opens PRs for the
+GitHub Actions and for new Nextcloud majors (`NEXTCLOUD_VERSION`). New releases
+wait 3 days before a PR is opened, nothing is automerged. Renovate proposes the
+newest major – if more than one major is behind, bump manually one at a time.
 
 ## Usage
 

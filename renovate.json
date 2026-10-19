@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "assignees": ["twiesing"],
+  "reviewers": ["twiesing"],
+  "minimumReleaseAge": "3 days",
+  "automerge": false,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Nextcloud major built by the workflow; bump one major at a time",
+      "managerFilePatterns": ["/^Dockerfile$/", "/^\\.github/workflows/build\\.yml$/"],
+      "matchStrings": ["NEXTCLOUD_VERSION[:=]\\s*\"?(?<currentValue>\\d+)\"?"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "nextcloud",
+      "versioningTemplate": "regex:^(?<major>\\d+)$"
+    }
+  ]
+}

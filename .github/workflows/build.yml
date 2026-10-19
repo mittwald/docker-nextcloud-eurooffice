@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  NEXTCLOUD_VERSION: "34"
+  NEXTCLOUD_VERSION: "35"
   VARIANT: "apache"
   IMAGE: ghcr.io/mittwald/nextcloud-eurooffice
   PLATFORMS: "linux/amd64,linux/arm64"
